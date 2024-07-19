@@ -2,7 +2,7 @@
 
 # 1. Description
 
-This Python script calls the Anthropic Claude Sonnet 3.5 API
+This Python script calls the Anthropic Claude Sonnet 3.5 and the Cohere Command R+ API using Streamlit framework
 
 # 2. Installation
 
@@ -46,15 +46,17 @@ In Command promt:
 
 Navigate to your folder project: cd add/your/folder/location/url
 
-Type python main.py
+Type streamlit run main.py
 
 
 # 3.Test
 3.1 Test 1 code:
 
-![Immagine 2024-07-09 code 1](https://github.com/AndreaPo/uni-internship-ai-project/assets/9412745/ace09ca7-ef19-4807-a5a8-9b0a75032e31)
+![2024-07-19_0757 app](https://github.com/user-attachments/assets/02e71e0f-44d8-4345-93be-8139df70d898)
+
 
 3.2 Test 1 output:
 
-![Immagine 2024-07-09 test 2](https://github.com/AndreaPo/uni-internship-ai-project/assets/9412745/921aa791-bd07-4e4d-9f70-d1ba81af6997)
+![2024-07-19_0808 results](https://github.com/user-attachments/assets/97d1756c-3dc4-4a90-ad7c-6d71fc949226)
+
 

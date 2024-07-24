@@ -1,6 +1,9 @@
 import streamlit as st
 import cohere
+import show_api_message
 import anthropic
+import json
+import re
 import os
 from dotenv import load_dotenv
 
@@ -22,58 +25,87 @@ with st.form("Main form"):
    )
    
    #Text prompts
-   prompt_message = st.text_area(
-    "*Text*",
-    "Ask me everything",
-    max_chars= 100,
-    placeholder="e.g. Explain the Bayes Theorem"
-    )
-   
-   #image prompts
-   #uploaded_file = st.file_uploader("Upload file")
+   with st.chat_message("User"):
+       prompt_message = st.text_area(
+           "*User*",
+           "Ask me everything",
+           max_chars= 1000,
+           placeholder="e.g. Explain the Bayes Theorem"
+        )
 
    submit_button = st.form_submit_button(label='Submit')
+   st.divider()
 
    if submit_button:
-        st.write("Model language selected: ", ml_selected)
-        st.write("Prompt message : ", prompt_message)
+        with st.chat_message("Assistant"):
+            st.write("Model language selected: ", ml_selected)
+            st.write("Prompt message : ", prompt_message)
 
         #Select Language model to use
         match ml_selected:
             #Anthropic Claude 3.5 Sonnet
             case "*Claude 3.5 Sonnet*":
-                client = anthropic.Anthropic(api_key=anthropic_api_key)
-                message = client.messages.create(
-                    model="claude-3-5-sonnet-20240620",
-                    max_tokens=200,
-                    temperature=0,
-                    system="",
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": prompt_message
-                                }
-                            ]
-                        }
-                    ]                
-                )
-                print("Tipo message: "+ type(message).__name__ + " Tipo message.content " + type(message.content).__name__)
-                print(message.content)
-                #Message un oggetto che contiene come attributo content(tipo lista) e ogni elemento della lista contiene un blocco testo(text)
-                for block_text in message.content:
-                    st.write(block_text.text)                
+                try:
+                    client = anthropic.Anthropic(api_key=anthropic_api_key)
+                    message = client.messages.create(
+                        model="claude-3-5-sonnet-20240620",
+                        max_tokens=300,
+                        temperature=0,
+                        system="",
+                        messages=[
+                            {
+                                "role": "user",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": prompt_message
+                                    }
+                                ]
+                            }
+                        ]                
+                    )
 
-                st.write()
+                    show_api_message.show_Sonnet_message(message)
+
+                    with st.chat_message("Assistant"):
+                        #Message un oggetto che contiene come attributo content(tipo lista) e ogni elemento della lista contiene un blocco testo(text)
+                        for block_text in message.content:
+                            st.write(block_text.text)    
+
+                except anthropic.AuthenticationError as e:
+                    print(f"Si è verificato un errore : {e}") 
+                    st.write(f"Si è verificato un errore : {e}")                    
+                
             #Cohere R+
             case "*Cohere R+*":
-                co = cohere.Client(cohere_api_key)
-                response = co.chat(
-                    message = prompt_message
+                try:
+                    co = cohere.Client(cohere_api_key)
+                    response = co.chat(
+                        message = prompt_message
                     )
-                print(response)
-                st.write(response)
+                    show_api_message.show_command_r_message(response)
+                    with st.chat_message("Assistant"):
+                        st.write(response.text) 
+
+                    regex =r'(\{.*\})'
+                    match_result =re.search(regex, response.text, re.DOTALL)
+                    
+                    string_to_convert = match_result.group()
+                    print(string_to_convert)
+
+                    if match_result:
+                        print("Json trovato!")
+                        string_to_convert = match_result.group()
+                        json_response = json.loads(string_to_convert)
+                        print(json_response["traccia"])
+                        print(json_response["ragionamento"])
+                        print(json_response["formula"])
+                        print(json_response["soluzione"])
+                    else:
+                        print("json non trovato")
+ 
+                except Exception as e:
+                    print(f"Si è verificato un errore: {e}")
+                    st.write(f"Si è verificato un errore : {e}")  
             case _:
                 print("invalid option!")

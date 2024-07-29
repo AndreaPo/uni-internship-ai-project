@@ -54,13 +54,16 @@ Type streamlit run main.py
 
 
 # 3.Test
-3.1 Test 1 code:
+3.1 Test 1 prompts and outputs:
 
-![2024-07-19_0757 app](https://github.com/user-attachments/assets/02e71e0f-44d8-4345-93be-8139df70d898)
+![Test 2024-07-29](https://github.com/user-attachments/assets/7c35e6d9-362b-4c11-afdb-bd0959760e10)
 
 
-3.2 Test 1 output:
 
-![2024-07-19_0808 results](https://github.com/user-attachments/assets/97d1756c-3dc4-4a90-ad7c-6d71fc949226)
+3.2 Test 1 terminal results:
+
+![terminal test 2024-07-29](https://github.com/user-attachments/assets/367e4f6f-54ed-483f-9ed3-050124275d37)
+
+
 
 

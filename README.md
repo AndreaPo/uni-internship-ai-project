@@ -40,7 +40,7 @@ Type python -m venv venv
 
 Type venv\Scripts\activate
 
-Type pip install -r requierements.txt
+Type pip install -r requirements.txt
 
 Type claude-env\Scripts\activate
 

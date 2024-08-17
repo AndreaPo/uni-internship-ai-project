@@ -2,25 +2,23 @@ import streamlit as st
 import cohere
 import show_api_message
 import anthropic
-import json
-import re
 import os
 from dotenv import load_dotenv
+from claude_sonnet import *
+from command_r_plus import *
+from create_json_response import *
 
 #Retrive all API KEYS
 load_dotenv()
-
 anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
 cohere_api_key = os.getenv('COHERE_APY_KEY')
-
-#prob_args = ["definizione probabilità, permutazioni", "combinazioni", "disposizioni", "probabilità condizionata"]
 
 response_names = ["PROBLEM","REASONING", "FORMULA", "SOLUTION"]
 
 if 'response_values' not in st.session_state:
     st.session_state['response_values'] = [None, None, None, None]
 
-prompt_desc = ", crea JSON solo 4 attributi( traccia: traccia problema, ragionamento: ragionamento arrivare formula, formula: formula usare(no descrizioni), soluzione: soluzione con formula) no ulteriori descrizioni, no sottoattributi innestati"
+prompt_description = ", crea JSON solo 4 attributi( traccia: traccia problema, ragionamento: ragionamento arrivare formula, formula: formula usare(no descrizioni), soluzione: soluzione con formula) no ulteriori descrizioni, no sottoattributi innestati"
 
 #Set Streamlit Objects
 st.title("*UNIVERSITY INTERN PROJECT*")
@@ -30,7 +28,7 @@ with st.form("Main form"):
    
    ml_selected = st.radio(
     "**Select one of the language model**",
-    ["*Claude 3.5 Sonnet*",  "*Cohere R+*"],
+    ["*Claude 3.5 Sonnet*",  "*Command R+*"],
    )
    
    #Text prompts
@@ -41,7 +39,7 @@ with st.form("Main form"):
            max_chars= 1000,
            placeholder="e.g. Explain the Bayes Theorem"
         )
-
+   
    submit_button = st.form_submit_button(label='Submit')
    st.divider()
 
@@ -50,89 +48,46 @@ with st.form("Main form"):
             st.write("Model language selected: ", ml_selected)
             st.write("Prompt message : ", prompt_message)
 
+        full_prompt = prompt_message + prompt_description
+        
         #Select Language model to use
         match ml_selected:
             #Anthropic Claude 3.5 Sonnet
             case "*Claude 3.5 Sonnet*":
                 try:
-                    client = anthropic.Anthropic(api_key=anthropic_api_key)
-                    response = client.messages.create(
-                        model="claude-3-5-sonnet-20240620",
-                        max_tokens=300,
-                        temperature=0,
-                        system="",
-                        messages=[
-                            {
-                                "role": "user",
-                                "content": [
-                                    {
-                                        "type": "text",
-                                        "text": prompt_message + prompt_desc
-                                    }
-                                ]
-                            }
-                        ]                
-                    )
+                    claude_sonnet = ClaudeSonnet(api_key=anthropic_api_key)
+
+                    connection_client = claude_sonnet.get_connection_client()
+
+                    response = claude_sonnet.txt_message_create(my_connection_client=connection_client, my_prompt=full_prompt)
 
                     show_api_message.show_Sonnet_message(response)
 
                     response_txt = ""
 
-                    
-                        #Message un oggetto che contiene come attributo content(tipo lista) e ogni elemento della lista contiene un blocco testo(text)
+                    #Response.content (type = list) every list element has a block text
                     for block_text in response.content:
                         response_txt += block_text.text
-                            
-                    #st.write(response_txt)   
 
-                    regex =r'(\{.*\})'
-                    match_result =re.search(regex, response_txt, re.DOTALL)
-                    
-                    string_to_convert = match_result.group()
-
-                    if match_result:
-                        string_to_convert = match_result.group()
-                        json_response = json.loads(string_to_convert)
-
-                        with st.chat_message("Assistant"):
-                            st.write(json_response["traccia"])
-
-                            st.session_state['response_values'] = [json_response["traccia"],json_response["ragionamento"], json_response["formula"],json_response["soluzione"]]
-
-                    else:
-                        print("json non trovato")
+                    extract_json(my_response_txt=response_txt)
 
                 except anthropic.AuthenticationError as e:
                     print(f"Si è verificato un errore : {e}") 
                     st.write(f"Si è verificato un errore : {e}")                    
                 
             #Cohere R+
-            case "*Cohere R+*":
+            case "*Command R+*":
                 try:
-                    co = cohere.Client(cohere_api_key)
-                    response = co.chat(
-                        message = prompt_message + prompt_desc
-                    )
+                    command_r_plus = Command_r_plus(cohere_api_key)
+
+                    command_r_plus_conncection = command_r_plus.get_connection()
+
+                    response = command_r_plus.txt_message_chat(my_connection_client=command_r_plus_conncection, my_prompt=full_prompt)
                     
                     show_api_message.show_command_r_message(response)
 
-                    regex =r'(\{.*\})'
-                    match_result =re.search(regex, response.text, re.DOTALL)
-                    
-                    string_to_convert = match_result.group()
+                    extract_json(my_response_txt=response.text)
 
-                    if match_result:
-                        string_to_convert = match_result.group()
-                        json_response = json.loads(string_to_convert)
-
-                        with st.chat_message("Assistant"):
-                            st.write(json_response["traccia"])
-
-                        st.session_state['response_values'] = [json_response["traccia"],json_response["ragionamento"], json_response["formula"],json_response["soluzione"]]
-
-                    else:
-                        print("json non trovato")
- 
                 except Exception as e:
                     print(f"Si è verificato un errore: {e}")
                     st.write(f"Si è verificato un errore : {e}")  

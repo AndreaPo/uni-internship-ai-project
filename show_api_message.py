@@ -1,4 +1,4 @@
-def show_Sonnet_message(message):
+def show_sonnet_message(message):
                         #stampo sul terminale tutto l'oggetto restituito(tipo lista)
                         print("\n***ANTHROPIC SONNET 3.5 API***\n")
 

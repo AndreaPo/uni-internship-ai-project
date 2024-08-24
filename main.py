@@ -61,7 +61,7 @@ with st.form("Main form"):
 
                     response = claude_sonnet.txt_message_create(my_connection_client=connection_client, my_prompt=full_prompt)
 
-                    show_api_message.show_Sonnet_message(response)
+                    show_api_message.show_sonnet_message(response)
 
                     response_txt = ""
 

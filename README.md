@@ -27,7 +27,7 @@ Navigate to your folder project: cd add/your/folder/location/url
 Type git clone https://github.com/AndreaPo/uni-internship-ai-project.git
 
 
-Create a new .env file with your Claude Sonnet 3.5 API KEY and just write inside: 
+Create a new .env file with your API KEYs and just write inside: 
 
 ANTHROPIC_API_KEY=paste_your_ANTHROPIC_API_KEY_here
 

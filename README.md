@@ -42,7 +42,7 @@ Type venv\Scripts\activate
 
 Type pip install -r requirements.txt
 
-Type claude-env\Scripts\activate
+
 
 # Execute the script: 
 

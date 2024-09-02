@@ -30,6 +30,10 @@ def show_command_r_message(message):
         #stampo sul terminale tutto l'oggetto
         print("\n***COHERE COMMAND R+ API***")
 
+        #print("\nOutput message: " + message.model)
+
+        #print("\nOutput message: " + message.conversation_id)
+
         print("\nOutput message: " + message.text)
 
         print("\nGeneration ID: " + str(message.generation_id))

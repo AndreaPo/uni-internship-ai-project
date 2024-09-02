@@ -14,6 +14,12 @@ load_dotenv()
 anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
 cohere_api_key = os.getenv('COHERE_APY_KEY')
 
+#control var to control the btn visualization
+if 'submitted' not in st.session_state:
+    st.session_state['submitted'] = False
+def on_submit():
+    st.session_state['submitted'] = True
+
 response_names = ["PROBLEM","REASONING", "FORMULA", "SOLUTION"]
 
 if 'response_values' not in st.session_state:
@@ -42,7 +48,7 @@ with st.form("Main form"):
            max_chars= 1000,
            placeholder="e.g. Explain the Bayes Theorem"
         )
-    submit_button = st.form_submit_button(label='Submit')
+    submit_button = st.form_submit_button(label='Submit', on_click=on_submit)
 json_res = {}
 if submit_button:
     LENGHT_CHECK = check_lenght(prompt_message)
@@ -97,6 +103,7 @@ if submit_button:
                         st.write(json_res["traccia"])
                     case _:
                         print("invalid option!")
-for i in range(4):
-    if st.button(response_names[i]):
-        st.write(st.session_state['response_values'][i])
+if st.session_state['submitted']:
+    for i in range(4):
+        if st.button(response_names[i]):
+            st.write(st.session_state['response_values'][i])

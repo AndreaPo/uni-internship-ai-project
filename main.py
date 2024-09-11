@@ -7,18 +7,13 @@ from claude_sonnet import *
 from command_r_plus import *
 from create_json_response import *
 from input_validate import *
+from chat_history import *
 
 
 #Retrive all API KEYS
 load_dotenv()
 anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
 cohere_api_key = os.getenv('COHERE_APY_KEY')
-
-#control var to control the btn visualization
-if 'submitted' not in st.session_state:
-    st.session_state['submitted'] = False
-def on_submit():
-    st.session_state['submitted'] = True
 
 response_names = ["PROBLEM","REASONING", "FORMULA", "SOLUTION"]
 
@@ -48,7 +43,7 @@ with st.form("Main form"):
            max_chars= 1000,
            placeholder="e.g. Explain the Bayes Theorem"
         )
-    submit_button = st.form_submit_button(label='Submit', on_click=on_submit)
+    submit_button = st.form_submit_button(label='Submit')
 json_res = {}
 if submit_button:
     LENGHT_CHECK = check_lenght(prompt_message)
@@ -81,6 +76,16 @@ if submit_button:
                             for block_text in response.content:
                                 responseTxt += block_text.text
                             json_res = extract_json(my_response_txt=responseTxt)
+
+                            data_to_append = {
+                                "prompt": prompt_message,
+                                "problem": json_res["traccia"],
+                                "reasoning":json_res["ragionamento"],
+                                "formula":json_res["formula"],
+                                "solution": json_res["soluzione"]
+                            }
+                            write_prompts_response(data_to_append)
+                            
                             st.write("TRACCIA ESERCIZIO")
                             st.write(json_res["traccia"])
 
@@ -99,11 +104,20 @@ if submit_button:
                             
                         json_res = extract_json(my_response_txt=res.text)
 
+                        data_to_append = {
+                            "prompt": prompt_message,
+                            "problem": json_res["traccia"],
+                            "reasoning":json_res["ragionamento"],
+                            "formula":json_res["formula"],
+                            "solution": json_res["soluzione"]
+                        }
+                        write_prompts_response(data_to_append)
+                        
                         st.write("TRACCIA ESERCIZIO")
                         st.write(json_res["traccia"])
                     case _:
                         print("invalid option!")
-if st.session_state['submitted']:
-    for i in range(4):
-        if st.button(response_names[i]):
-            st.write(st.session_state['response_values'][i])
+for i in range(4):
+    if st.button(response_names[i]):
+        st.write(st.session_state['response_values'][i])
+read_write_create_history_db()

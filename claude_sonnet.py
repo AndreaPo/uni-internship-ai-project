@@ -12,7 +12,7 @@ class ClaudeSonnet:
         except anthropic.AuthenticationError as e:
             print(f"Si è verificato un errore : {e}")
             st.write(f"Si è verificato un errore : {e}")
-    def txt_message_create(self, my_prompt, my_connection_client = None, my_model = "claude-3-5-sonnet-20240620", my_max_tokens = 300, my_temperature = 0):
+    def txt_message_create(self, my_prompt, my_connection_client = None, my_model = "claude-3-5-sonnet-20240620", my_max_tokens = 300, my_temperature = 1.0):
         if my_connection_client is None:
             my_connection_client = self.get_connection_client()
         

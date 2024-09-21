@@ -10,7 +10,7 @@ def read_write_create_history_db():
                 #create json from data
                 json_data_list = json.loads(data)
                 #print with streamlit
-                st.title("**History chat**")
+                st.header("**History chat**")
                 for json_data in json_data_list:
                     with st.chat_message("User"):
                         st.write(str(json_data["prompt"]))

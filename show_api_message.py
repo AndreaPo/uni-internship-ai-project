@@ -1,6 +1,6 @@
 def show_sonnet_message(message):
                         #stampo sul terminale tutto l'oggetto restituito(tipo lista)
-                        print("\n***ANTHROPIC SONNET 3.5 API***\n")
+                        print("\n***New message from ANTHROPIC SONNET 3.5 API***\n")
 
                         print("ID: " + message.id + "\n")  
 
@@ -28,7 +28,7 @@ def show_sonnet_message(message):
 
 def show_command_r_message(message):
         #stampo sul terminale tutto l'oggetto
-        print("\n***COHERE COMMAND R+ API***")
+        print("\n***New message from COHERE COMMAND R+ API***")
 
         #print("\nOutput message: " + message.model)
 

@@ -11,6 +11,9 @@ from input_validate import *
 from chat_history import *
 from pdf import *
 from datetime import datetime
+from streamlit_searchbox import st_searchbox
+from autocomplete_search import *
+
 
 #Retrive all API KEYS
 load_dotenv()
@@ -30,22 +33,18 @@ if 'responses_number' not in st.session_state:
 
 #Set Streamlit Objects
 st.title("*UNIVERSITY INTERN PROJECT*")
+st.write("Insert a MAX of 150 characters.")
 
+selected_value = st_searchbox(search, key="autocomplete_search")
+st.write(f"Hai selezionato: {selected_value}")
 #form to prompts
 with st.form("Main form"):
     ml_selected = st.radio(
      "**Select one of the language model**",
     ["*Claude 3.5 Sonnet*",  "*Command R+*"],
    )
-    st.write("Insert a MAX of 150 characters.")
-    #Text prompts
-    with st.chat_message("User"):
-        prompt_message = st.text_area(
-           "*User*",
-           "Ask me everything",
-           max_chars= 1000,
-           placeholder="e.g. Explain the Bayes Theorem"
-        )
+    prompt_message = selected_value
+            
     submit_button = st.form_submit_button(label='Submit')
 
 #when user send a prompt 
